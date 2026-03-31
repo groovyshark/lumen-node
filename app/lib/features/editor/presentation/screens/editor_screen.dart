@@ -1,36 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:lumen_node_app/features/editor/providers/editor_provider.dart';
+import 'package:lumen_node_app/app/theme/app_theme.dart';
 import 'package:lumen_node_app/features/editor/presentation/widgets/node_canvas.dart';
+import 'package:lumen_node_app/features/editor/presentation/widgets/properties_inspector.dart';
+import 'package:lumen_node_app/features/editor/presentation/widgets/side_bar.dart';
+import 'package:lumen_node_app/features/editor/presentation/widgets/top_nav_bar.dart';
+import 'package:lumen_node_app/features/editor/presentation/widgets/bottom_code_panel.dart';
 
 class EditorScreen extends ConsumerWidget {
   const EditorScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shaderCode = ref.watch(editorProvider.select((s) => s.shaderCode));
-
     return Scaffold(
-      body: Row(
+      backgroundColor: AppColors.surfaceDim,
+      body: Column(
         children: [
-          const Expanded(flex: 3, child: NodeCanvas()),
-          Container(width: 1, color: Colors.white10),
+          const TopNavBar(),
           Expanded(
-            flex: 1,
-            child: Container(
-              color: const Color(0xFF0F0F0F),
-              padding: const EdgeInsets.all(12),
-              child: SingleChildScrollView(
-                child: Text(
-                  shaderCode,
-                  style: const TextStyle(
-                    color: Colors.orangeAccent,
-                    fontFamily: 'Consolas',
-                    fontSize: 13,
+            child: Row(
+              children: [
+                const SideBar(),
+                Expanded(
+                  child: Column(
+                    children: [
+                      const Expanded(child: NodeCanvas()),
+                      Container(height: 1, color: AppColors.outlineVariant), // Тончайший сплиттер
+                      const BottomCodePanel(),
+                    ],
                   ),
                 ),
-              ),
+                Container(width: 1, color: AppColors.outlineVariant),
+                const PropertiesInspector(),
+              ],
             ),
           ),
         ],
