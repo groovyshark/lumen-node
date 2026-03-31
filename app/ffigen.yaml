@@ -1,0 +1,8 @@
+name: LumenBindings
+description: "FFI bindings for the Lumen Node App, allowing Flutter to interface with the C++ shader graph library."
+output: lib/generated_bindings.dart
+headers:
+  entry-points:
+    - ../bridge/include/lumen_ffi.h
+llvm-path:
+  - 'C:\Program Files\LLVM'
