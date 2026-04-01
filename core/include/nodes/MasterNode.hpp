@@ -1,12 +1,10 @@
 #pragma once
 
-#include <format>
-
 #include "Node.hpp"
 
-class ColorNode : public Node {
+class MasterNode : public Node {
 public:
-    ColorNode(const std::string& id);
+    MasterNode(const std::string& id);
 
     std::string emitCode(const std::map<std::string, std::shared_ptr<Node>>& allNodes) override;
 };

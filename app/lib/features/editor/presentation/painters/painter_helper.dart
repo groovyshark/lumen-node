@@ -16,7 +16,17 @@ abstract class PainterHelper {
     return path;
   }
 
-  static Offset getOffsetForSourceNode(NodeModel node) {
-    return Offset(node.position.dx + node.size.width, node.position.dy + node.size.height - 12);
+  static Offset getPinOffsetForSourceNode(NodeModel node, int outputIndex) {
+    return Offset(
+      node.position.dx + node.size.width - 12,
+      node.position.dy + node.size.height - 18 - (outputIndex * 24),
+    );
+  }
+
+  static Offset getPinOffsetForTargetNode(NodeModel node, int inputIndex) {
+    return Offset(
+      node.position.dx + 16,
+      node.position.dy + 46 + (inputIndex * 20),
+    );
   }
 }

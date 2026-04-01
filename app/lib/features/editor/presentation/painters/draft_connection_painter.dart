@@ -6,13 +6,15 @@ import 'package:lumen_node_app/features/editor/presentation/painters/painter_hel
 
 class DraftConnectionPainter extends CustomPainter {
   final NodeModel fromNode;
+  final String fromPin;
   final Offset draftingPos;
 
-  const DraftConnectionPainter(this.fromNode, this.draftingPos);
+  const DraftConnectionPainter(this.fromNode, this.fromPin, this.draftingPos);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final p1 = PainterHelper.getOffsetForSourceNode(fromNode);
+    final outIndex = fromNode.outputs.indexOf(fromPin);
+    final p1 = PainterHelper.getPinOffsetForSourceNode(fromNode, outIndex);
 
     final draftPaint = Paint()
       ..color = AppColors.primary
@@ -28,6 +30,7 @@ class DraftConnectionPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant DraftConnectionPainter oldDelegate) {
     return oldDelegate.draftingPos != draftingPos ||
-        oldDelegate.fromNode.position != fromNode.position;
+        oldDelegate.fromNode.position != fromNode.position ||
+        oldDelegate.fromPin != fromPin;
   }
 }

@@ -30,8 +30,8 @@ class LumenBindings {
   late final _createGraph = _createGraphPtr
       .asFunction<ffi.Pointer<ffi.Void> Function()>();
 
-  void destroyGraph(ffi.Pointer<ffi.Void> graph) {
-    return _destroyGraph(graph);
+  void destroyGraph(ffi.Pointer<ffi.Void> graphPtr) {
+    return _destroyGraph(graphPtr);
   }
 
   late final _destroyGraphPtr =
@@ -41,8 +41,11 @@ class LumenBindings {
   late final _destroyGraph = _destroyGraphPtr
       .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
 
-  void addColorNode(ffi.Pointer<ffi.Void> graph, ffi.Pointer<ffi.Char> nodeId) {
-    return _addColorNode(graph, nodeId);
+  void addColorNode(
+    ffi.Pointer<ffi.Void> graphPtr,
+    ffi.Pointer<ffi.Char> nodeId,
+  ) {
+    return _addColorNode(graphPtr, nodeId);
   }
 
   late final _addColorNodePtr =
@@ -56,8 +59,116 @@ class LumenBindings {
         void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>)
       >();
 
-  ffi.Pointer<ffi.Char> compile(ffi.Pointer<ffi.Void> graph) {
-    return _compile(graph);
+  void addMultiplyNode(
+    ffi.Pointer<ffi.Void> graphPtr,
+    ffi.Pointer<ffi.Char> nodeId,
+  ) {
+    return _addMultiplyNode(graphPtr, nodeId);
+  }
+
+  late final _addMultiplyNodePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>)
+        >
+      >('addMultiplyNode');
+  late final _addMultiplyNode = _addMultiplyNodePtr
+      .asFunction<
+        void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>)
+      >();
+
+  void setNodeParameter(
+    ffi.Pointer<ffi.Void> graphPtr,
+    ffi.Pointer<ffi.Char> nodeId,
+    ffi.Pointer<ffi.Char> paramName,
+    double value,
+  ) {
+    return _setNodeParameter(graphPtr, nodeId, paramName, value);
+  }
+
+  late final _setNodeParameterPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Float,
+          )
+        >
+      >('setNodeParameter');
+  late final _setNodeParameter = _setNodeParameterPtr
+      .asFunction<
+        void Function(
+          ffi.Pointer<ffi.Void>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          double,
+        )
+      >();
+
+  void connectNodes(
+    ffi.Pointer<ffi.Void> graphPtr,
+    ffi.Pointer<ffi.Char> fromNode,
+    ffi.Pointer<ffi.Char> fromPin,
+    ffi.Pointer<ffi.Char> toNode,
+    ffi.Pointer<ffi.Char> toPin,
+  ) {
+    return _connectNodes(graphPtr, fromNode, fromPin, toNode, toPin);
+  }
+
+  late final _connectNodesPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+          )
+        >
+      >('connectNodes');
+  late final _connectNodes = _connectNodesPtr
+      .asFunction<
+        void Function(
+          ffi.Pointer<ffi.Void>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+        )
+      >();
+
+  void disconnectNode(
+    ffi.Pointer<ffi.Void> graphPtr,
+    ffi.Pointer<ffi.Char> targetNode,
+    ffi.Pointer<ffi.Char> targetPin,
+  ) {
+    return _disconnectNode(graphPtr, targetNode, targetPin);
+  }
+
+  late final _disconnectNodePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+          )
+        >
+      >('disconnectNode');
+  late final _disconnectNode = _disconnectNodePtr
+      .asFunction<
+        void Function(
+          ffi.Pointer<ffi.Void>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+        )
+      >();
+
+  ffi.Pointer<ffi.Char> compile(ffi.Pointer<ffi.Void> graphPtr) {
+    return _compile(graphPtr);
   }
 
   late final _compilePtr =

@@ -19,13 +19,15 @@ class ConnectionPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    // 1. Рисуем установленные связи
     for (final conn in connections) {
       final fromNode = nodes.firstWhere((n) => n.id == conn.fromNodeId);
       final toNode = nodes.firstWhere((n) => n.id == conn.toNodeId);
 
-      final p1 = PainterHelper.getOffsetForSourceNode(fromNode);
-      final p2 = Offset(toNode.position.dx, toNode.position.dy + 32);
+      final outIndex = fromNode.outputs.indexOf(conn.fromPin);
+      final p1 = PainterHelper.getPinOffsetForSourceNode(fromNode, outIndex);
+
+      final inIndex = toNode.inputs.indexOf(conn.toPin);
+      final p2 = PainterHelper.getPinOffsetForTargetNode(toNode, inIndex);
 
       canvas.drawPath(PainterHelper.createBezierPath(p1, p2), paint);
     }

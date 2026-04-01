@@ -14,20 +14,75 @@ class Editor extends _$Editor {
   @override
   EditorState build() {
     ref.watch(lumenEngineProvider);
-    return const EditorState();
+    return EditorState(
+      nodes: [
+        NodeModel(
+          id: "master", 
+          name: "FRAGMENT OUTPUT", 
+          type: NodeType.master, 
+          position: const Offset(600, 300), // Справа по умолчанию
+          inputs: ["color"], 
+          outputs: [] // Выходов нет
+        )
+      ]
+    );
   }
 
-  void addColorNode(Offset position) {
+  NodeModel _initNode(
+    String id,
+    String name,
+    NodeType type,
+    Offset position,
+    List<String> inputs,
+    List<String> outputs, {
+    Map<String, double> parameters = const {},
+  }) {
+    return NodeModel(
+      id: id,
+      name: name,
+      position: position,
+      type: type,
+      inputs: inputs,
+      outputs: outputs,
+      parameters: parameters,
+    );
+  }
+
+  void spawnNode(NodeType type, Offset position) {
     final engine = ref.read(lumenEngineProvider);
     final id = "node_${state.nodes.length}";
 
-    engine.addColorNode(id);
+    NodeModel? newNode;
+    switch (type) {
+      case NodeType.color:
+        newNode = _initNode(
+          id,
+          "Color Node",
+          type,
+          position,
+          [],
+          ["output"],
+          parameters: {"r": 1.0, "g": 1.0, "b": 1.0, "a": 1.0},
+        );
+        engine.addColorNode(id);
+        break;
+      case NodeType.multiply:
+        newNode = _initNode(
+          id,
+          "Multiply Node",
+          type,
+          position,
+          ["a", "b"],
+          ["output"],
+        );
+        engine.addMultiplyNode(id);
+        break;
+      case NodeType.master:
+        break;
+    }
 
     state = state.copyWith(
-      nodes: [
-        ...state.nodes,
-        NodeModel(id: id, name: "Color Node", position: position),
-      ],
+      nodes: [...state.nodes, newNode!],
       shaderCode: engine.compile(),
     );
   }
@@ -38,6 +93,10 @@ class Editor extends _$Editor {
           .map((node) => node.id == id ? node.copyWith(name: newName) : node)
           .toList(),
     );
+  }
+
+  void selectNode(String? id) {
+    state = state.copyWith(selectedNodeId: id, clearSelection: id == null);
   }
 
   void updateNodePosition(String id, Offset delta) {
@@ -52,8 +111,30 @@ class Editor extends _$Editor {
     );
   }
 
-  void startDraftingConnection(String nodeId, Offset startPos) {
-    state = state.copyWith(draftingNodeId: nodeId, draftingPos: startPos);
+  void updateNodeParameter(String nodeId, String paramName, double value) {
+    state = state.copyWith(
+      nodes: state.nodes.map((n) {
+        if (n.id == nodeId) {
+          final newParams = Map<String, double>.from(n.parameters);
+          newParams[paramName] = value;
+          return n.copyWith(parameters: newParams);
+        }
+        return n;
+      }).toList(),
+    );
+
+    final engine = ref.read(lumenEngineProvider);
+    engine.setNodeParameter(nodeId, paramName, value);
+
+    state = state.copyWith(shaderCode: engine.compile());
+  }
+
+  void startDraftingConnection(String nodeId, String pinName, Offset startPos) {
+    state = state.copyWith(
+      draftingNodeId: nodeId,
+      draftingPinName: pinName,
+      draftingPos: startPos,
+    );
   }
 
   void updateDraftingConnection(Offset pos) {
@@ -63,16 +144,17 @@ class Editor extends _$Editor {
   }
 
   void endDraftingConnection() {
-    if (state.draftingNodeId == null || state.draftingPos == null) {
+    final fromNodeId = state.draftingNodeId;
+    final fromPinName = state.draftingPinName;
+    final dropPos = state.draftingPos;
+
+    if (fromNodeId == null || fromPinName == null || dropPos == null) {
       state = state.copyWith(clearDraft: true);
       return;
     }
 
-    final dropPos = state.draftingPos!;
-
     final targetNode = state.nodes.where((n) {
-      if (n.id == state.draftingNodeId) return false;
-
+      if (n.id == fromNodeId) return false;
       final rect = Rect.fromLTWH(
         n.position.dx,
         n.position.dy,
@@ -82,15 +164,33 @@ class Editor extends _$Editor {
       return rect.contains(dropPos);
     }).firstOrNull;
 
-    if (targetNode != null) {
+
+    if (targetNode != null && targetNode.inputs.isNotEmpty) {
+      final relativeY = dropPos.dy - targetNode.position.dy;
+      final pinIndex =
+          (relativeY / (targetNode.size.height / targetNode.inputs.length))
+              .floor()
+              .clamp(0, targetNode.inputs.length - 1);
+
+      final targetPinName = targetNode.inputs[pinIndex];
+
       state = state.copyWith(
         connections: [
           ...state.connections,
-          ConnectionModel(state.draftingNodeId!, targetNode.id),
+          ConnectionModel(
+            fromNodeId,
+            fromPinName,
+            targetNode.id,
+            targetPinName,
+          ),
         ],
         clearDraft: true,
       );
-      // TODO: Call C++ for connecting nodes: engine.connectNodes(...)
+
+      final engine = ref.read(lumenEngineProvider);
+      engine.connect(fromNodeId, fromPinName, targetNode.id, targetPinName);
+
+      state = state.copyWith(shaderCode: engine.compile());
     } else {
       state = state.copyWith(clearDraft: true);
     }
@@ -105,8 +205,12 @@ class Editor extends _$Editor {
       final fromNode = state.nodes.firstWhere((n) => n.id == c.fromNodeId);
       final toNode = state.nodes.firstWhere((n) => n.id == c.toNodeId);
 
-      final p1 = PainterHelper.getOffsetForSourceNode(fromNode);
-      final p2 = Offset(toNode.position.dx, toNode.position.dy + 32);
+      final outIndex = fromNode.outputs.indexOf(c.fromPin);
+      final p1 = PainterHelper.getPinOffsetForSourceNode(fromNode, outIndex);
+
+      final inIndex = toNode.inputs.indexOf(c.toPin);
+      final p2 = PainterHelper.getPinOffsetForTargetNode(toNode, inIndex);
+      
       final path = PainterHelper.createBezierPath(p1, p2);
 
       if (_isPointNearPath(clickPos, path, hitTolerance)) {
@@ -122,8 +226,9 @@ class Editor extends _$Editor {
             .toList(),
       );
 
-      // TODO: Call C++ to disconnect nodes if needed
-      // engine.disconnectNodes(connectionToRemove.fromNodeId, connectionToRemove.toNodeId);
+      final engine = ref.read(lumenEngineProvider);
+      engine.disconnect(connectionToRemove.toNodeId, connectionToRemove.toPin);
+      state = state.copyWith(shaderCode: engine.compile());
     }
   }
 
@@ -134,12 +239,12 @@ class Editor extends _$Editor {
     for (final metric in metrics) {
       for (double i = 0; i < metric.length; i += step) {
         final tangent = metric.getTangentForOffset(i);
-        
+
         if (tangent != null) {
           final distance = (tangent.position - point).distance;
 
           if (distance <= tolerance) {
-            return true; 
+            return true;
           }
         }
       }

@@ -1,5 +1,13 @@
 class ConnectionModel {
+  const ConnectionModel(
+    this.fromNodeId,
+    this.fromPin,
+    this.toNodeId,
+    this.toPin,
+  );
+
   final String fromNodeId;
+  final String fromPin;
   final String toNodeId;
-  const ConnectionModel(this.fromNodeId, this.toNodeId);
+  final String toPin;
 }
