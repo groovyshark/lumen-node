@@ -3,6 +3,16 @@
 #include <optional>
 
 #include "flutter/generated_plugin_registrant.h"
+#include <flutter/plugin_registrar.h>
+#include <flutter/texture_registrar.h>
+#include <flutter/plugin_registrar_windows.h>
+// #include <flutter/pixel_buffer_texture.h>
+
+#include "../../../core/include/renderer/opengl/OpenGLRenderer.hpp"
+
+std::unique_ptr<OpenGLRenderer> glRenderer;
+int64_t glTextureId = -1;
+std::unique_ptr<flutter::PluginRegistrarWindows> gPluginRegistrar;
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -35,6 +45,31 @@ bool FlutterWindow::OnCreate() {
   // registered. The following call ensures a frame is pending to ensure the
   // window is shown. It is a no-op if the first frame hasn't completed yet.
   flutter_controller_->ForceRedraw();
+
+  glRenderer = std::make_unique<OpenGLRenderer>(512, 512);
+
+  auto registrar_ref = flutter_controller_->engine()->GetRegistrarForPlugin("LumenRenderer");
+
+  gPluginRegistrar = std::make_unique<flutter::PluginRegistrarWindows>(registrar_ref);
+  flutter::TextureRegistrar* registrar = gPluginRegistrar->texture_registrar();
+
+  auto texture = std::make_unique<flutter::TextureVariant>(
+      flutter::PixelBufferTexture([](size_t width, size_t height) -> const FlutterDesktopPixelBuffer* {
+          
+          // Этот коллбэк вызывает Flutter, когда ему нужен новый кадр!
+          static FlutterDesktopPixelBuffer buffer = {};
+          
+          if (glRenderer) {
+              glRenderer->render();
+              
+              buffer.buffer = glRenderer->getPixels();
+              buffer.width = glRenderer->getWidth();
+              buffer.height = glRenderer->getHeight();
+          }
+          return &buffer;
+      }));
+  
+  glTextureId = registrar->RegisterTexture(texture.get());
 
   return true;
 }

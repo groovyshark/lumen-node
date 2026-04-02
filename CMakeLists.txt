@@ -9,6 +9,9 @@ if(NOT CMAKE_TOOLCHAIN_FILE AND DEFINED ENV{VCPKG_ROOT})
 endif()
 
 find_package(glm CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(GLEW CONFIG REQUIRED)
+find_package(OpenGL REQUIRED)
 
 file(GLOB_RECURSE SOURCES 
     "core/*.cpp" "core/*.hpp" "core/*.h"
@@ -26,6 +29,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     glm::glm
+    glfw
+    GLEW::GLEW
+    OpenGL::GL
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES Windows_EXPORT_ALL_SYMBOLS ON)

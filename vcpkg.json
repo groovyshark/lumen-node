@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "dependencies": [
     "glm",
-    "nlohmann-json"
+    "nlohmann-json",
+    "glfw3",
+    "glew"
   ]
 }

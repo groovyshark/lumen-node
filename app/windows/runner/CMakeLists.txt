@@ -14,7 +14,13 @@ add_executable(${BINARY_NAME} WIN32
   "${FLUTTER_MANAGED_DIR}/generated_plugin_registrant.cc"
   "Runner.rc"
   "runner.exe.manifest"
+  "../../../core/src/renderer/opengl/OpenGLRenderer.cpp"
 )
+
+list(APPEND CMAKE_PREFIX_PATH "C:/development/lumen-node/build/vcpkg_installed/x64-windows")
+
+find_package(GLEW REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
 
 # Apply the standard set of build settings. This can be removed for applications
 # that need different build settings.
@@ -32,9 +38,26 @@ target_compile_definitions(${BINARY_NAME} PRIVATE "NOMINMAX")
 
 # Add dependency libraries and include directories. Add any application-specific
 # dependencies here.
-target_link_libraries(${BINARY_NAME} PRIVATE flutter flutter_wrapper_app)
+target_link_libraries(${BINARY_NAME} PRIVATE flutter flutter_wrapper_app flutter_wrapper_plugin opengl32 GLEW::GLEW glfw )
 target_link_libraries(${BINARY_NAME} PRIVATE "dwmapi.lib")
-target_include_directories(${BINARY_NAME} PRIVATE "${CMAKE_SOURCE_DIR}")
+target_include_directories(${BINARY_NAME} PRIVATE "${CMAKE_SOURCE_DIR}" "../../../core/include")
 
 # Run the Flutter tool portions of the build. This must not be removed.
 add_dependencies(${BINARY_NAME} flutter_assemble)
+
+add_custom_command(TARGET ${BINARY_NAME} POST_BUILD
+    # 1. Копируем твою библиотеку ядра (проверь правильность пути к твоей сборке)
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "C:/development/lumen-node/build/Debug/lumen-node.dll"
+    "$<TARGET_FILE_DIR:${BINARY_NAME}>/"
+
+    # 2. Копируем GLEW (с суффиксом 'd' для Debug)
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "C:/development/lumen-node/build/vcpkg_installed/x64-windows/debug/bin/glew32d.dll"
+    "$<TARGET_FILE_DIR:${BINARY_NAME}>/"
+
+    # 3. Копируем GLFW
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "C:/development/lumen-node/build/vcpkg_installed/x64-windows/debug/bin/glfw3.dll"
+    "$<TARGET_FILE_DIR:${BINARY_NAME}>/"
+)
