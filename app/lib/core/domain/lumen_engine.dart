@@ -36,6 +36,14 @@ class LumenEngine {
     malloc.free(nativeId);
   }
 
+  void addAddNode(String id) {
+    if (_graph == null) return;
+
+    final nativeId = id.toNativeUtf8();
+    _native.addAddNode(_graph!, nativeId.cast<Char>());
+    malloc.free(nativeId);
+  }
+
   void setNodeParameter(String nodeId, String paramName, double value) {
     if (_graph == null) return;
 

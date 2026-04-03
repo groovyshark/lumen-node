@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum NodeType { color, multiply, master }
+enum NodeType { color, add, multiply, master }
 
 class NodeModel {
   const NodeModel({

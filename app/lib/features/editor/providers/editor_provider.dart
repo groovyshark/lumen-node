@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:lumen_node_app/core/providers/lumen_provider.dart';
 import 'package:lumen_node_app/features/editor/data/editor_state.dart';
@@ -11,9 +12,46 @@ part 'editor_provider.g.dart';
 
 @riverpod
 class Editor extends _$Editor {
+  static const _rendererChannel = MethodChannel('lumen/renderer');
+
+  void _syncShaderCode() async {
+    final engine = ref.read(lumenEngineProvider);
+    final newCode = engine.compile();
+    
+    state = state.copyWith(shaderCode: newCode);
+    
+    print("DART: Отправляем код в C++:\n$newCode");
+    
+    try {
+      await _rendererChannel.invokeMethod('updateShader', {'code': newCode});
+      print("DART: Код успешно доставлен в C++!");
+    } catch (e) {
+      print("DART ОШИБКА КАНАЛА: $e");
+    }
+  }
+
+  void _initRenderer() async {
+    try {
+      final id = await _rendererChannel.invokeMethod<int>('getTextureId');
+      
+      if (id != null) {
+        print("Texture ID: $id");
+
+        state = state.copyWith(textureId: id);
+        
+        _syncShaderCode();
+      }
+    } catch (e) {
+      print("Ошибка получения Texture ID: $e");
+    }
+  }
+
   @override
   EditorState build() {
     ref.watch(lumenEngineProvider);
+
+    Future.microtask(() => _initRenderer());
+
     return EditorState(
       nodes: [
         NodeModel(
@@ -77,6 +115,17 @@ class Editor extends _$Editor {
         );
         engine.addMultiplyNode(id);
         break;
+      case NodeType.add:
+        newNode = _initNode(
+          id,
+          "Add Node",
+          type,
+          position,
+          ["a", "b"],
+          ["output"],
+        );
+        engine.addAddNode(id);
+        break;
       case NodeType.master:
         break;
     }
@@ -126,7 +175,7 @@ class Editor extends _$Editor {
     final engine = ref.read(lumenEngineProvider);
     engine.setNodeParameter(nodeId, paramName, value);
 
-    state = state.copyWith(shaderCode: engine.compile());
+    _syncShaderCode();
   }
 
   void startDraftingConnection(String nodeId, String pinName, Offset startPos) {
@@ -190,7 +239,7 @@ class Editor extends _$Editor {
       final engine = ref.read(lumenEngineProvider);
       engine.connect(fromNodeId, fromPinName, targetNode.id, targetPinName);
 
-      state = state.copyWith(shaderCode: engine.compile());
+      _syncShaderCode();
     } else {
       state = state.copyWith(clearDraft: true);
     }
@@ -228,7 +277,8 @@ class Editor extends _$Editor {
 
       final engine = ref.read(lumenEngineProvider);
       engine.disconnect(connectionToRemove.toNodeId, connectionToRemove.toPin);
-      state = state.copyWith(shaderCode: engine.compile());
+      
+      _syncShaderCode();
     }
   }
 

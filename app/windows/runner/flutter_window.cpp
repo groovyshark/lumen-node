@@ -6,13 +6,21 @@
 #include <flutter/plugin_registrar.h>
 #include <flutter/texture_registrar.h>
 #include <flutter/plugin_registrar_windows.h>
+#include <flutter/method_channel.h>
+#include <flutter/standard_method_codec.h>
+#include <flutter/encodable_value.h>
 // #include <flutter/pixel_buffer_texture.h>
 
 #include "../../../core/include/renderer/opengl/OpenGLRenderer.hpp"
 
 std::unique_ptr<OpenGLRenderer> glRenderer;
 int64_t glTextureId = -1;
+
 std::unique_ptr<flutter::PluginRegistrarWindows> gPluginRegistrar;
+
+std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> gChannel;
+
+std::unique_ptr<flutter::TextureVariant> gTexture;
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -53,15 +61,15 @@ bool FlutterWindow::OnCreate() {
   gPluginRegistrar = std::make_unique<flutter::PluginRegistrarWindows>(registrar_ref);
   flutter::TextureRegistrar* registrar = gPluginRegistrar->texture_registrar();
 
-  auto texture = std::make_unique<flutter::TextureVariant>(
+  gTexture = std::make_unique<flutter::TextureVariant>(
       flutter::PixelBufferTexture([](size_t width, size_t height) -> const FlutterDesktopPixelBuffer* {
           
           // Этот коллбэк вызывает Flutter, когда ему нужен новый кадр!
           static FlutterDesktopPixelBuffer buffer = {};
           
-          if (glRenderer) {
-              glRenderer->render();
-              
+          if (glRenderer) {      
+              // glRenderer->render();
+
               buffer.buffer = glRenderer->getPixels();
               buffer.width = glRenderer->getWidth();
               buffer.height = glRenderer->getHeight();
@@ -69,7 +77,51 @@ bool FlutterWindow::OnCreate() {
           return &buffer;
       }));
   
-  glTextureId = registrar->RegisterTexture(texture.get());
+  glTextureId = registrar->RegisterTexture(gTexture.get());
+
+  std::cout << "========== REAL TEXTURE ID IS: " << glTextureId << " ==========" << std::endl;
+
+  gChannel = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+      flutter_controller_->engine()->messenger(), "lumen/renderer",
+      &flutter::StandardMethodCodec::GetInstance());
+  
+  gChannel->SetMethodCallHandler(
+      [registrar](const flutter::MethodCall<flutter::EncodableValue>& call,
+                  std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+        
+        if (call.method_name() == "getTextureId") {
+            result->Success(flutter::EncodableValue(glTextureId));
+            return;
+        }
+
+        if (call.method_name() == "updateShader") {
+          const auto* args = std::get_if<flutter::EncodableMap>(call.arguments());
+          if (args) {
+            auto it = args->find(flutter::EncodableValue("code"));
+            if (it != args->end() && std::holds_alternative<std::string>(it->second)) {
+              
+              std::string shaderCode = std::get<std::string>(it->second);
+
+              std::cout << "C++ ПОЛУЧИЛ КОД ДЛИНОЙ: " << shaderCode.length() << " символов" << std::endl;
+              std::cout << "C++ КОД ШЕЙДЕРА: " << shaderCode << std::endl;
+              
+              if (glRenderer) {
+                glRenderer->updateShader(shaderCode);
+
+                glRenderer->render();
+                
+                registrar->MarkTextureFrameAvailable(glTextureId);
+              }
+
+              result->Success();
+              return;
+            }
+          }
+          result->Error("BAD_ARGS", "Expected string argument 'code'");
+        } else {
+          result->NotImplemented();
+        }
+      });
 
   return true;
 }

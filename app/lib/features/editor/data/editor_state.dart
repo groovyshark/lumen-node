@@ -15,6 +15,8 @@ class EditorState {
   final String? draftingPinName;
   final Offset? draftingPos;
 
+  final int? textureId;
+
   const EditorState({
     this.nodes = const [],
     this.connections = const [],
@@ -23,6 +25,7 @@ class EditorState {
     this.draftingNodeId,
     this.draftingPinName,
     this.draftingPos,
+    this.textureId,
   });
 
   EditorState copyWith({
@@ -33,6 +36,7 @@ class EditorState {
     String? draftingNodeId,
     String? draftingPinName,
     Offset? draftingPos,
+    int? textureId,
     bool clearDraft = false,
     bool clearSelection = false,
   }) {
@@ -40,6 +44,7 @@ class EditorState {
       nodes: nodes ?? this.nodes,
       connections: connections ?? this.connections,
       shaderCode: shaderCode ?? this.shaderCode,
+      textureId: textureId ?? this.textureId,
       selectedNodeId: clearSelection ? null : (selectedNodeId ?? this.selectedNodeId),
       draftingNodeId: clearDraft ? null : (draftingNodeId ?? this.draftingNodeId),
       draftingPinName: clearDraft ? null : (draftingPinName ?? this.draftingPinName),

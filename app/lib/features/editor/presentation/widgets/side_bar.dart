@@ -46,6 +46,19 @@ class SideBar extends ConsumerWidget {
           ),
         ),
         PopupMenuItem(
+          value: NodeType.add,
+          child: Row(
+            children: [
+              Icon(Icons.add, color: AppColors.secondary, size: 16),
+              SizedBox(width: 8),
+              Text(
+                "Add Node",
+                style: TextStyle(color: AppColors.onSurface),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
           value: NodeType.multiply,
           child: Row(
             children: [

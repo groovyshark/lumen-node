@@ -15,6 +15,7 @@ extern "C" {
 
     EXPORT void addColorNode(void* graphPtr, const char* nodeId);
     EXPORT void addMultiplyNode(void* graphPtr, const char* nodeId);
+    EXPORT void addAddNode(void* graphPtr, const char* nodeId);
 
     EXPORT void setNodeParameter(
         void* graphPtr, 

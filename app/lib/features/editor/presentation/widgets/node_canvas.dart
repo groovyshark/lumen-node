@@ -103,12 +103,16 @@ class _NodeWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final headerColor = node.type == NodeType.color
         ? const Color(0xFF004050)
+        : node.type == NodeType.add
+        ? const Color(0xFF4A19FF)
         : node.type == NodeType.multiply
         ? const Color(0xFF4A195E)
         : const Color(0xFF8B0000); // Master node
 
     final accentColor = node.type == NodeType.color
         ? AppColors.primary
+        : node.type == NodeType.add
+        ? AppColors.secondary
         : node.type == NodeType.multiply
         ? AppColors.tertiary
         : Colors.redAccent;

@@ -53,9 +53,15 @@ class PropertiesInspector extends ConsumerWidget {
                   ),
                 ],
               ),
-              child: const ClipRRect(
+              child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(10)),
-                child: Texture(textureId: 0),
+                child: state.textureId == null
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
+                      )
+                    : Texture(textureId: state.textureId!),
               ),
             ),
           ),

@@ -6,9 +6,9 @@ namespace {
     const char* vertexShaderSource = R"(
         #version 330 core
         layout(location = 0) in vec2 aPos;
-        out vec2 vUV;
+        out vec2 uv;
         void main() {
-            vUV = (aPos + 1.0) * 0.5;
+            uv = (aPos + 1.0) * 0.5;
             gl_Position = vec4(aPos, 0.0, 1.0);
         }
     )";
@@ -94,6 +94,8 @@ void OpenGLRenderer::setupQuad() {
 }
 
 void OpenGLRenderer::updateShader(const std::string& fragmentShaderCode) {
+    glfwMakeContextCurrent(_window);
+
     std::string fullSource = std::format(
         "#version 330 core\n"
         "out vec4 FragColor;\n"
@@ -114,6 +116,14 @@ void OpenGLRenderer::updateShader(const std::string& fragmentShaderCode) {
     glAttachShader(_shaderProgram, vs);
     glAttachShader(_shaderProgram, fs);
     glLinkProgram(_shaderProgram);
+
+    GLint success;
+    glGetProgramiv(_shaderProgram, GL_LINK_STATUS, &success);
+    if (!success) {
+        char infoLog[1024];
+        glGetProgramInfoLog(_shaderProgram, 1024, NULL, infoLog);
+        std::cout << "ОШИБКА ЛИНКОВКИ ШЕЙДЕРОВ:\n" << infoLog << std::endl;
+    }
     
     glDeleteShader(vs);
     glDeleteShader(fs);
@@ -144,9 +154,13 @@ GLuint OpenGLRenderer::compileShader(GLenum type, const std::string& source) {
     GLint success;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
-        char infoLog[512];
-        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-        std::cerr << "OpenGLRenderer::compileShader: Shader compilation error: " << infoLog << std::endl;
+        char infoLog[1024];
+        glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+        std::string shaderType = (type == GL_VERTEX_SHADER) ? "VERTEX" : "FRAGMENT";
+        
+        // Выводим ошибку в консоль
+        std::cout << "ОШИБКА КОМПИЛЯЦИИ " << shaderType << " ШЕЙДЕРА:\n" << infoLog << std::endl;
+        std::cout << "ИСХОДНИК БЫЛ ТАКИМ:\n" << source << std::endl;
     }
 
     return shader;

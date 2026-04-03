@@ -56,9 +56,14 @@ std::string ShaderGraph::compile() {
     resultCode += bodyCode;
 
     std::string finalColor = "vec4(0.0, 0.0, 0.0, 1.0)";
-    if (_nodes.count("master") && !_nodes["master"]->inputs[0].connectedNodeId.empty()) {
+    if (_nodes.count("master")) {
         auto masterIn = _nodes["master"]->inputs[0];
-        finalColor = _nodes[masterIn.connectedNodeId]->getOutputVar(masterIn.connectedPinName);
+        
+        if (!masterIn.connectedNodeId.empty()) {
+            finalColor = _nodes[masterIn.connectedNodeId]->getOutputVar(masterIn.connectedPinName);
+        } else {
+            finalColor = masterIn.defaultValue;
+        }
     }
 
     resultCode += std::format("    fragColor = {};\n", finalColor);

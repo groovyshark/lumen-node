@@ -5,7 +5,7 @@ MasterNode::MasterNode(const std::string& nodeId) {
     name = "Fragment Output";
 
     Pin inColor = {id + "_in_color", "color", PinType::Vec4, id};
-    inColor.defaultValue = "vec4(0.0, 0.0, 0.0, 1.0)";
+    inColor.defaultValue = "vec4(1.0, 0.0, 0.0, 1.0)";
     inputs.push_back(inColor);
 }
 

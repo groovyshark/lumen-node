@@ -2,6 +2,7 @@
 
 #include "nodes/ColorNode.hpp"
 #include "nodes/MultiplyNode.hpp"
+#include "nodes/AddNode.hpp"
 #include "Graph.hpp"
 
 extern "C" {
@@ -21,6 +22,11 @@ extern "C" {
     EXPORT void addMultiplyNode(void* graphPtr, const char* nodeId) {
         auto graph = static_cast<ShaderGraph*>(graphPtr);
         graph->addNode(std::make_shared<MultiplyNode>(nodeId));
+    }
+
+    EXPORT void addAddNode(void* graphPtr, const char* nodeId) {
+        auto graph = static_cast<ShaderGraph*>(graphPtr);
+        graph->addNode(std::make_shared<AddNode>(nodeId));
     }
 
     EXPORT void setNodeParameter(

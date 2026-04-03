@@ -77,6 +77,24 @@ class LumenBindings {
         void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>)
       >();
 
+  void addAddNode(
+    ffi.Pointer<ffi.Void> graphPtr,
+    ffi.Pointer<ffi.Char> nodeId,
+  ) {
+    return _addAddNode(graphPtr, nodeId);
+  }
+
+  late final _addAddNodePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>)
+        >
+      >('addAddNode');
+  late final _addAddNode = _addAddNodePtr
+      .asFunction<
+        void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>)
+      >();
+
   void setNodeParameter(
     ffi.Pointer<ffi.Void> graphPtr,
     ffi.Pointer<ffi.Char> nodeId,
