@@ -20,13 +20,10 @@ class Editor extends _$Editor {
     
     state = state.copyWith(shaderCode: newCode);
     
-    print("DART: Отправляем код в C++:\n$newCode");
-    
     try {
       await _rendererChannel.invokeMethod('updateShader', {'code': newCode});
-      print("DART: Код успешно доставлен в C++!");
     } catch (e) {
-      print("DART ОШИБКА КАНАЛА: $e");
+      rethrow;
     }
   }
 
@@ -35,14 +32,12 @@ class Editor extends _$Editor {
       final id = await _rendererChannel.invokeMethod<int>('getTextureId');
       
       if (id != null) {
-        print("Texture ID: $id");
-
         state = state.copyWith(textureId: id);
         
         _syncShaderCode();
       }
     } catch (e) {
-      print("Ошибка получения Texture ID: $e");
+      rethrow;
     }
   }
 
@@ -58,9 +53,9 @@ class Editor extends _$Editor {
           id: "master", 
           name: "FRAGMENT OUTPUT", 
           type: NodeType.master, 
-          position: const Offset(600, 300), // Справа по умолчанию
+          position: const Offset(600, 300),
           inputs: ["color"], 
-          outputs: [] // Выходов нет
+          outputs: []
         )
       ]
     );

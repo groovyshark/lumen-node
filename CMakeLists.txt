@@ -8,6 +8,7 @@ if(NOT CMAKE_TOOLCHAIN_FILE AND DEFINED ENV{VCPKG_ROOT})
     set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
 endif()
 
+find_package(spdlog CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(GLEW CONFIG REQUIRED)
@@ -32,6 +33,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     glfw
     GLEW::GLEW
     OpenGL::GL
+    spdlog::spdlog
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES Windows_EXPORT_ALL_SYMBOLS ON)

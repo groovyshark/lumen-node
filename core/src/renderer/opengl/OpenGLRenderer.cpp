@@ -43,7 +43,7 @@ OpenGLRenderer::~OpenGLRenderer() {
 
 bool OpenGLRenderer::initialize(int width, int height) {
     if (!glfwInit()) {
-        std::cerr << "Failed to initialize GLFW" << std::endl;
+        std::cerr << "OpenGLRenderer::initialize: Failed to initialize GLFW" << std::endl;
         return false;
     }
 
@@ -54,7 +54,8 @@ bool OpenGLRenderer::initialize(int width, int height) {
 
     _window = glfwCreateWindow(width, height, "OpenGL Renderer", nullptr, nullptr);
     if (!_window) {
-        std::cerr << "Failed to create GLFW window" << std::endl;
+        std::cerr << "OpenGLRenderer::initialize: Failed to create GLFW window" << std::endl;
+
         glfwTerminate();
         return false;
     }
@@ -62,7 +63,7 @@ bool OpenGLRenderer::initialize(int width, int height) {
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
-        std::cerr << "Failed to initialize GLEW" << std::endl;
+        std::cerr << "OpenGLRenderer::initialize: Failed to initialize GLEW" << std::endl;
         return false;
     }
 
@@ -122,7 +123,7 @@ void OpenGLRenderer::updateShader(const std::string& fragmentShaderCode) {
     if (!success) {
         char infoLog[1024];
         glGetProgramInfoLog(_shaderProgram, 1024, NULL, infoLog);
-        std::cout << "ОШИБКА ЛИНКОВКИ ШЕЙДЕРОВ:\n" << infoLog << std::endl;
+        std::cerr << std::format("OpenGLRenderer::updateShader: Shader linking error:\n{}", infoLog) << std::endl;
     }
     
     glDeleteShader(vs);
@@ -156,11 +157,11 @@ GLuint OpenGLRenderer::compileShader(GLenum type, const std::string& source) {
     if (!success) {
         char infoLog[1024];
         glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-        std::string shaderType = (type == GL_VERTEX_SHADER) ? "VERTEX" : "FRAGMENT";
-        
-        // Выводим ошибку в консоль
-        std::cout << "ОШИБКА КОМПИЛЯЦИИ " << shaderType << " ШЕЙДЕРА:\n" << infoLog << std::endl;
-        std::cout << "ИСХОДНИК БЫЛ ТАКИМ:\n" << source << std::endl;
+        std::cerr << std::format("OpenGLRenderer::compileShader: Shader compilation error:\n{}", infoLog) << std::endl;
+        std::string shaderType = std::format("{}", (type == GL_VERTEX_SHADER) ? "VERTEX" : "FRAGMENT");
+
+        std::cerr << std::format("OpenGLRenderer::compileShader: {} shader compilation error:\n{}", shaderType, infoLog) << std::endl;
+        std::cerr << std::format("OpenGLRenderer::compileShader: Shader source:\n{}", source) << std::endl;
     }
 
     return shader;

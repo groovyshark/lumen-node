@@ -44,8 +44,9 @@ void ShaderGraph::disconnect(
 }
 
 std::string ShaderGraph::compile() {
-    if (_nodes.empty())
+    if (_nodes.empty()) {
         return "// Graph is empty";
+    }
 
     std::string resultCode = "void mainImage(out vec4 fragColor, in vec2 fragCoord) {\n";
 
