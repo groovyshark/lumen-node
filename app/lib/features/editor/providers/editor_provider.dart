@@ -1,3 +1,4 @@
+import 'package:lumen_node_app/features/editor/data/node_factory.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,14 +50,7 @@ class Editor extends _$Editor {
 
     return EditorState(
       nodes: [
-        NodeModel(
-          id: "master", 
-          name: "FRAGMENT OUTPUT", 
-          type: NodeType.master, 
-          position: const Offset(600, 300),
-          inputs: ["color"], 
-          outputs: []
-        )
+        NodeFactory.create('master', NodeType.master, const Offset(600, 300))
       ]
     );
   }
@@ -85,48 +79,11 @@ class Editor extends _$Editor {
     final engine = ref.read(lumenEngineProvider);
     final id = "node_${state.nodes.length}";
 
-    NodeModel? newNode;
-    switch (type) {
-      case NodeType.color:
-        newNode = _initNode(
-          id,
-          "Color Node",
-          type,
-          position,
-          [],
-          ["output"],
-          parameters: {"r": 1.0, "g": 1.0, "b": 1.0, "a": 1.0},
-        );
-        engine.addColorNode(id);
-        break;
-      case NodeType.multiply:
-        newNode = _initNode(
-          id,
-          "Multiply Node",
-          type,
-          position,
-          ["a", "b"],
-          ["output"],
-        );
-        engine.addMultiplyNode(id);
-        break;
-      case NodeType.add:
-        newNode = _initNode(
-          id,
-          "Add Node",
-          type,
-          position,
-          ["a", "b"],
-          ["output"],
-        );
-        engine.addAddNode(id);
-        break;
-      case NodeType.master:
-        break;
-    }
+    NodeModel newNode = NodeFactory.create(id, type, position);
+    engine.addNode(id, type);
 
     state = state.copyWith(
-      nodes: [...state.nodes, newNode!],
+      nodes: [...state.nodes, newNode],
       shaderCode: engine.compile(),
     );
   }

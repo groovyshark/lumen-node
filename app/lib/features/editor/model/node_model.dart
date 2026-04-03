@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 
-enum NodeType { color, add, multiply, master }
+import 'package:lumen_node_app/generated_bindings.dart';
+
+enum NodeType {
+  color(ENodeType.NODE_TYPE_COLOR),
+  multiply(ENodeType.NODE_TYPE_MULTIPLY),
+  add(ENodeType.NODE_TYPE_ADD),
+  master(ENodeType.NODE_TYPE_MASTER);
+
+  final ENodeType nativeValue;
+  const NodeType(this.nativeValue);
+}
 
 class NodeModel {
   const NodeModel({
@@ -14,6 +24,45 @@ class NodeModel {
     this.parameters = const {},
   });
 
+  NodeModel.base(
+    String id,
+    NodeType type,
+    Offset position, {
+    String? name,
+    List<String>? inputs,
+    List<String>? outputs,
+    Map<String, double>? parameters,
+  }) : this(
+         id: id,
+         type: type,
+         position: position,
+         name: name ?? "New Node",
+         inputs: inputs ?? const [],
+         outputs: outputs ?? const [],
+         parameters: parameters ?? const {},
+       );
+
+  NodeModel copyWith({
+    String? name,
+    Offset? position,
+    Size? size,
+    List<String>? inputs,
+    List<String>? outputs,
+
+    Map<String, double>? parameters,
+  }) {
+    return NodeModel(
+      id: id,
+      name: name ?? this.name,
+      position: position ?? this.position,
+      type: type,
+      inputs: inputs ?? this.inputs,
+      outputs: outputs ?? this.outputs,
+      size: size ?? this.size,
+      parameters: parameters ?? this.parameters,
+    );
+  }
+
   final String id;
   final String name;
 
@@ -26,17 +75,4 @@ class NodeModel {
   final Size size;
 
   final Map<String, double> parameters;
-
-  NodeModel copyWith({String? name, Offset? position, Map<String, double>? parameters}) {
-    return NodeModel(
-      id: id,
-      name: name ?? this.name,
-      position: position ?? this.position,
-      type: type,
-      inputs: inputs,
-      outputs: outputs,
-      size: size,
-      parameters: parameters ?? this.parameters,
-    );
-  }
 }

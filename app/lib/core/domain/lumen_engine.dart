@@ -1,7 +1,12 @@
 import 'dart:ffi';
 import 'dart:io';
 import 'package:ffi/ffi.dart';
+
 import 'package:lumen_node_app/generated_bindings.dart';
+
+import 'package:lumen_node_app/features/editor/model/node_model.dart';
+
+typedef NativeNodeFunc = void Function(Pointer<Void>, Pointer<Char>);
 
 class LumenEngine {
   late final LumenBindings _native;
@@ -20,27 +25,12 @@ class LumenEngine {
     throw UnsupportedError('Platform not supported');
   }
 
-  void addColorNode(String id) {
+  void addNode(String id, NodeType type) {
     if (_graph == null) return;
 
     final nativeId = id.toNativeUtf8();
-    _native.addColorNode(_graph!, nativeId.cast<Char>());
-    malloc.free(nativeId);
-  }
+    _native.addNode(_graph!, nativeId.cast<Char>(), type.nativeValue);
 
-  void addMultiplyNode(String id) {
-    if (_graph == null) return;
-
-    final nativeId = id.toNativeUtf8();
-    _native.addMultiplyNode(_graph!, nativeId.cast<Char>());
-    malloc.free(nativeId);
-  }
-
-  void addAddNode(String id) {
-    if (_graph == null) return;
-
-    final nativeId = id.toNativeUtf8();
-    _native.addAddNode(_graph!, nativeId.cast<Char>());
     malloc.free(nativeId);
   }
 

@@ -3,6 +3,7 @@
 #include "nodes/ColorNode.hpp"
 #include "nodes/MultiplyNode.hpp"
 #include "nodes/AddNode.hpp"
+#include "nodes/MasterNode.hpp"
 #include "Graph.hpp"
 
 extern "C" {
@@ -14,19 +15,23 @@ extern "C" {
         delete static_cast<ShaderGraph*>(graphPtr);
     }
 
-    EXPORT void addColorNode(void* graphPtr, const char* nodeId) {
+    EXPORT void addNode(void* graphPtr, const char* nodeId, ENodeType nodeType) {
         auto graph = static_cast<ShaderGraph*>(graphPtr);
-        graph->addNode(std::make_shared<ColorNode>(nodeId));
-    }
 
-    EXPORT void addMultiplyNode(void* graphPtr, const char* nodeId) {
-        auto graph = static_cast<ShaderGraph*>(graphPtr);
-        graph->addNode(std::make_shared<MultiplyNode>(nodeId));
-    }
-
-    EXPORT void addAddNode(void* graphPtr, const char* nodeId) {
-        auto graph = static_cast<ShaderGraph*>(graphPtr);
-        graph->addNode(std::make_shared<AddNode>(nodeId));
+        switch(nodeType) {
+            case NODE_TYPE_COLOR:
+                graph->addNode(std::make_shared<ColorNode>(nodeId));
+                break;
+            case NODE_TYPE_MULTIPLY:
+                graph->addNode(std::make_shared<MultiplyNode>(nodeId));
+                break;
+            case NODE_TYPE_ADD:
+                graph->addNode(std::make_shared<AddNode>(nodeId));
+                break;
+            case NODE_TYPE_MASTER:
+                graph->addNode(std::make_shared<MasterNode>(nodeId));
+                break;
+        }
     }
 
     EXPORT void setNodeParameter(

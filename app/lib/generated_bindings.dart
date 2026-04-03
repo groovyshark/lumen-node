@@ -41,58 +41,27 @@ class LumenBindings {
   late final _destroyGraph = _destroyGraphPtr
       .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
 
-  void addColorNode(
+  void addNode(
     ffi.Pointer<ffi.Void> graphPtr,
     ffi.Pointer<ffi.Char> nodeId,
+    ENodeType nodeType,
   ) {
-    return _addColorNode(graphPtr, nodeId);
+    return _addNode(graphPtr, nodeId, nodeType.value);
   }
 
-  late final _addColorNodePtr =
+  late final _addNodePtr =
       _lookup<
         ffi.NativeFunction<
-          ffi.Void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>)
+          ffi.Void Function(
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<ffi.Char>,
+            ffi.UnsignedInt,
+          )
         >
-      >('addColorNode');
-  late final _addColorNode = _addColorNodePtr
+      >('addNode');
+  late final _addNode = _addNodePtr
       .asFunction<
-        void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>)
-      >();
-
-  void addMultiplyNode(
-    ffi.Pointer<ffi.Void> graphPtr,
-    ffi.Pointer<ffi.Char> nodeId,
-  ) {
-    return _addMultiplyNode(graphPtr, nodeId);
-  }
-
-  late final _addMultiplyNodePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>)
-        >
-      >('addMultiplyNode');
-  late final _addMultiplyNode = _addMultiplyNodePtr
-      .asFunction<
-        void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>)
-      >();
-
-  void addAddNode(
-    ffi.Pointer<ffi.Void> graphPtr,
-    ffi.Pointer<ffi.Char> nodeId,
-  ) {
-    return _addAddNode(graphPtr, nodeId);
-  }
-
-  late final _addAddNodePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>)
-        >
-      >('addAddNode');
-  late final _addAddNode = _addAddNodePtr
-      .asFunction<
-        void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>)
+        void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>, int)
       >();
 
   void setNodeParameter(
@@ -197,4 +166,22 @@ class LumenBindings {
       >('compile');
   late final _compile = _compilePtr
       .asFunction<ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Void>)>();
+}
+
+enum ENodeType {
+  NODE_TYPE_COLOR(0),
+  NODE_TYPE_MULTIPLY(1),
+  NODE_TYPE_ADD(2),
+  NODE_TYPE_MASTER(100);
+
+  final int value;
+  const ENodeType(this.value);
+
+  static ENodeType fromValue(int value) => switch (value) {
+    0 => NODE_TYPE_COLOR,
+    1 => NODE_TYPE_MULTIPLY,
+    2 => NODE_TYPE_ADD,
+    100 => NODE_TYPE_MASTER,
+    _ => throw ArgumentError('Unknown value for ENodeType: $value'),
+  };
 }

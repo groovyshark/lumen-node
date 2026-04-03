@@ -9,13 +9,17 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+    typedef enum {
+        NODE_TYPE_COLOR = 0,
+        NODE_TYPE_MULTIPLY = 1,
+        NODE_TYPE_ADD = 2,
+        NODE_TYPE_MASTER = 100
+    } ENodeType;
 
     EXPORT void* createGraph();
     EXPORT void destroyGraph(void* graphPtr);
 
-    EXPORT void addColorNode(void* graphPtr, const char* nodeId);
-    EXPORT void addMultiplyNode(void* graphPtr, const char* nodeId);
-    EXPORT void addAddNode(void* graphPtr, const char* nodeId);
+    EXPORT void addNode(void* graphPtr, const char* nodeId, ENodeType nodeType);
 
     EXPORT void setNodeParameter(
         void* graphPtr, 

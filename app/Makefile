@@ -18,7 +18,7 @@ gen:
 
 ffi:
 	@echo "🔗 Generating FFI bindings..."
-	@dart run build_runner build --delete-conflicting-outputs --build-filter=**/*_ffi.dart
+	@dart run ffigen --config ffigen.yaml
 
 # icons:
 # 	@echo "🎨 Generating icons..."

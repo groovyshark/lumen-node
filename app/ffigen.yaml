@@ -4,5 +4,8 @@ output: lib/generated_bindings.dart
 headers:
   entry-points:
     - ../bridge/include/lumen_ffi.h
+enums:
+  member-filter:
+    - NodeType
 llvm-path:
   - 'C:\Program Files\LLVM'
