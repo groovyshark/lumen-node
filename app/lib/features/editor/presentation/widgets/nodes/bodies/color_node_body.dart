@@ -14,14 +14,34 @@ class ColorNodeBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: Column(
         children: [
-          _staticProperty("R:", node.parameters["r"] ?? 1.0),
-          _staticProperty("G:", node.parameters["g"] ?? 1.0),
-          _staticProperty("B:", node.parameters["b"] ?? 1.0),
-          _staticProperty("A:", node.parameters["a"] ?? 1.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _staticProperty("R:", node.parameters["r"] ?? 1.0),
+              _staticProperty("G:", node.parameters["g"] ?? 1.0),
+              _staticProperty("B:", node.parameters["b"] ?? 1.0),
+              _staticProperty("A:", node.parameters["a"] ?? 1.0),
+            ],
+          ),
+
+          Container(
+            margin: const EdgeInsets.only(top: 8.0),
+            width: double.infinity,
+            height: 18,
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(
+                ((node.parameters["r"] ?? 1.0) * 255).toInt(),
+                ((node.parameters["g"] ?? 1.0) * 255).toInt(),
+                ((node.parameters["b"] ?? 1.0) * 255).toInt(),
+                (node.parameters["a"] ?? 1.0),
+              ),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: AppColors.onSurfaceVariant),
+            ),
+          ),
         ],
       ),
     );
