@@ -3,12 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lumen_node_app/features/editor/model/node_model.dart';
 
 import 'base_node_wrapper.dart';
-import 'bodies/color_node_body.dart';
-import 'bodies/multiply_node_body.dart';
-import 'bodies/add_node_body.dart';
-import 'bodies/master_node_body.dart';
-import 'bodies/uv_node_body.dart';
-import 'bodies/time_node_body.dart';
+import 'node_bodies.dart';
 
 typedef NodeBuilder = Widget Function(BuildContext context, NodeModel node);
 
@@ -19,6 +14,7 @@ class NodeWidgetFactory {
     NodeType.add: (context, node) => AddNodeBody(node: node),
     NodeType.uv: (context, node) => UVNodeBody(node: node),
     NodeType.time: (context, node) => TimeNodeBody(node: node),
+    NodeType.normal: (context, node) => NormalNodeBody(node: node),
 
     NodeType.master: (context, node) => MasterNodeBody(node: node),
   };

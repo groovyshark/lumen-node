@@ -5,6 +5,7 @@
 #include "nodes/ColorNode.hpp"
 #include "nodes/MasterNode.hpp"
 #include "nodes/MultiplyNode.hpp"
+#include "nodes/NormalNode.hpp"
 #include "nodes/TimeNode.hpp"
 #include "nodes/UVNode.hpp"
 
@@ -36,6 +37,9 @@ EXPORT void addNode(void* graphPtr, const char* nodeId, ENodeType nodeType) {
         break;
     case NODE_TYPE_UV:
         graph->addNode(std::make_shared<UVNode>(nodeId));
+        break;
+    case NODE_TYPE_NORMAL:
+        graph->addNode(std::make_shared<NormalNode>(nodeId));
         break;
     case NODE_TYPE_MASTER:
         graph->addNode(std::make_shared<MasterNode>(nodeId));

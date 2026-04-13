@@ -17,6 +17,7 @@ class AppColors {
 
   static const orange = Color(0xFFFFA726);
   static const teal = Color(0xFF26A69A);
+  static const green = Color(0xFF66BB6A);
   
   static const onSurface = Color(0xFFFFFFFF);
   static const onSurfaceVariant = Color(0xFFADAAAA);

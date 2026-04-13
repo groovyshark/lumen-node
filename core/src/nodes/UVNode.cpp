@@ -1,5 +1,7 @@
 #include "nodes/UVNode.hpp"
 
+#include <format>
+
 UVNode::UVNode(const std::string &nodeId) {
     id = nodeId;
     name = "UV";

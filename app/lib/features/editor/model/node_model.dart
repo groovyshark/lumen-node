@@ -8,6 +8,7 @@ enum NodeType {
   add(ENodeType.NODE_TYPE_ADD),
   uv(ENodeType.NODE_TYPE_UV),
   time(ENodeType.NODE_TYPE_TIME),
+  normal(ENodeType.NODE_TYPE_NORMAL),
 
   master(ENodeType.NODE_TYPE_MASTER);
 

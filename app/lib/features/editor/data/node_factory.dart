@@ -33,6 +33,11 @@ class NodeFactory {
       inputs: [],
       outputs: ["output"],
     ),
+    NodeType.normal: (id, type, position) => NodeModel.base(id, type, position).copyWith(
+      name: "Normal Node",
+      inputs: [],
+      outputs: ["output"],
+    ),
     NodeType.master: (id, type, position) => NodeModel.base(id, type, position).copyWith(
       name: "FRAGMENT OUTPUT",
       inputs: ["color"],

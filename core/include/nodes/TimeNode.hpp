@@ -1,7 +1,5 @@
 #pragma once
 
-#include <format>
-
 #include "Node.hpp"
 
 class TimeNode : public Node {

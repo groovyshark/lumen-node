@@ -174,6 +174,7 @@ enum ENodeType {
   NODE_TYPE_ADD(2),
   NODE_TYPE_TIME(3),
   NODE_TYPE_UV(4),
+  NODE_TYPE_NORMAL(5),
   NODE_TYPE_MASTER(100);
 
   final int value;
@@ -185,6 +186,7 @@ enum ENodeType {
     2 => NODE_TYPE_ADD,
     3 => NODE_TYPE_TIME,
     4 => NODE_TYPE_UV,
+    5 => NODE_TYPE_NORMAL,
     100 => NODE_TYPE_MASTER,
     _ => throw ArgumentError('Unknown value for ENodeType: $value'),
   };

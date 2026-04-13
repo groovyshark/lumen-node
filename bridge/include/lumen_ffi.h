@@ -15,6 +15,7 @@ extern "C" {
         NODE_TYPE_ADD = 2,
         NODE_TYPE_TIME = 3,
         NODE_TYPE_UV = 4,
+        NODE_TYPE_NORMAL = 5,
 
         NODE_TYPE_MASTER = 100
     } ENodeType;

@@ -1,5 +1,7 @@
 #include "nodes/TimeNode.hpp"
 
+#include <format>
+
 TimeNode::TimeNode(const std::string &nodeId) {
     id = nodeId;
     name = "Time";

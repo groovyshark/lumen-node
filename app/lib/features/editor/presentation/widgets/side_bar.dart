@@ -97,6 +97,19 @@ class SideBar extends ConsumerWidget {
             ],
           ),
         ),
+        PopupMenuItem(
+          value: NodeType.normal,
+          child: Row(
+            children: [
+              Icon(Icons.device_unknown, color: AppColors.green, size: 16),
+              SizedBox(width: 8),
+              Text(
+                "Normal Node",
+                style: TextStyle(color: AppColors.onSurface),
+              ),
+            ],
+          ),
+        ),
       ],
     );
 

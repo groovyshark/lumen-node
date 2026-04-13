@@ -27,20 +27,28 @@ public:
 
 private:
     void setupQuad();
+    void setupSphere();
+
     GLuint compileShader(GLenum type, const std::string& source);
 
 private:
-    GLFWwindow* _window;
+    GLFWwindow* _window{nullptr};
 
-    GLuint _shaderProgram;
-    GLuint _framebuffer;
-    GLuint _texture;
-    GLuint _vao;
-    GLuint _vbo;
+    GLuint _shaderProgram{0};
+    GLuint _framebuffer{0};
+    GLuint _texture{0};
+    GLuint _vao{0};
+    GLuint _vbo{0};
+    GLuint _rbo{0};
 
-    int _width;
-    int _height;
+    int _width{0};
+    int _height{0};
 
     std::vector<uint8_t> _pixelBuffer;
+
+    GLuint sphereVAO{0};
+    GLuint sphereVBO{0};
+    GLuint sphereEBO{0};
+    int sphereIndexCount{0};
 };
 

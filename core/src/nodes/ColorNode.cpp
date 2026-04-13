@@ -1,5 +1,7 @@
 #include "nodes/ColorNode.hpp"
 
+#include <format>
+
 ColorNode::ColorNode(const std::string &nodeId) {
     id = nodeId;
     name = "Color";

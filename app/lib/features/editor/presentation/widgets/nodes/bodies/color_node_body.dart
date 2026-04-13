@@ -32,9 +32,9 @@ class ColorNodeBody extends ConsumerWidget {
           ),
 
           Container(
-            margin: const EdgeInsets.only(top: 8.0),
+            margin: const EdgeInsets.only(top: 6.0),
             width: double.infinity,
-            height: 18,
+            height: 16,
             decoration: BoxDecoration(
               color: Color.fromRGBO(
                 (r * 255).toInt(),
