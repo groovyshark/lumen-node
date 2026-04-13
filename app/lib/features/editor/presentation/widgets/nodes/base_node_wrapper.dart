@@ -77,7 +77,7 @@ class BaseNodeWrapper extends ConsumerWidget {
                     ),
                   ),
                   Icon(
-                    node.type == NodeType.color ? Icons.palette : Icons.close,
+                    _getIcon(node.type),
                     size: 14,
                     color: _getAccentColor(node.type),
                   ),
@@ -250,6 +250,24 @@ class BaseNodeWrapper extends ConsumerWidget {
       case NodeType.time:
         return Colors.tealAccent.shade100;
       // default: return Colors.grey.shade500;
+    }
+  }
+
+  IconData _getIcon(NodeType type) {
+    switch (type) {
+      case NodeType.master:
+        return Icons.output;
+      case NodeType.color:
+        return Icons.palette;
+      case NodeType.add:
+        return Icons.add;
+      case NodeType.multiply:
+        return Icons.close;
+      case NodeType.uv:
+        return Icons.grid_on;
+      case NodeType.time:
+        return Icons.access_time;
+      // default: return Icons.device_unknown;
     }
   }
 }

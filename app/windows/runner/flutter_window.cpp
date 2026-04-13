@@ -90,12 +90,14 @@ bool FlutterWindow::OnCreate() {
             if (method == "getTextureId") {
                 result->Success(flutter::EncodableValue(glTextureId));
             } else if (method == "requestFrame") {
+                double currentTime = glfwGetTime();
+
                 if (glRenderer) {
                     glRenderer->render();
                     
                     registrar->MarkTextureFrameAvailable(glTextureId);
                 }
-                result->Success();
+                result->Success(flutter::EncodableValue(currentTime));
             } else if (method == "updateShader") {
                 const auto *args = std::get_if<flutter::EncodableMap>(call.arguments());
                 if (args) {

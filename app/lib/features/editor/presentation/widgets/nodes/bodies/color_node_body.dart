@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import 'package:lumen_node_app/features/editor/presentation/widgets/nodes/node_static_property.dart';
 import 'package:lumen_node_app/features/editor/model/node_model.dart';
 import 'package:lumen_node_app/app/theme/app_theme.dart';
-
 
 class ColorNodeBody extends ConsumerWidget {
   final NodeModel node;
@@ -13,6 +12,11 @@ class ColorNodeBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final r = node.parameters["r"] ?? 1.0;
+    final g = node.parameters["g"] ?? 1.0;
+    final b = node.parameters["b"] ?? 1.0;
+    final a = node.parameters["a"] ?? 1.0;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Column(
@@ -20,10 +24,10 @@ class ColorNodeBody extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _staticProperty("R:", node.parameters["r"] ?? 1.0),
-              _staticProperty("G:", node.parameters["g"] ?? 1.0),
-              _staticProperty("B:", node.parameters["b"] ?? 1.0),
-              _staticProperty("A:", node.parameters["a"] ?? 1.0),
+              NodeStaticProperty(name: "R:", value: r.toStringAsFixed(2)),
+              NodeStaticProperty(name: "G:", value: g.toStringAsFixed(2)),
+              NodeStaticProperty(name: "B:", value: b.toStringAsFixed(2)),
+              NodeStaticProperty(name: "A:", value: a.toStringAsFixed(2)),
             ],
           ),
 
@@ -33,10 +37,10 @@ class ColorNodeBody extends ConsumerWidget {
             height: 18,
             decoration: BoxDecoration(
               color: Color.fromRGBO(
-                ((node.parameters["r"] ?? 1.0) * 255).toInt(),
-                ((node.parameters["g"] ?? 1.0) * 255).toInt(),
-                ((node.parameters["b"] ?? 1.0) * 255).toInt(),
-                (node.parameters["a"] ?? 1.0),
+                (r * 255).toInt(),
+                (g * 255).toInt(),
+                (b * 255).toInt(),
+                a,
               ),
               borderRadius: BorderRadius.circular(4),
               border: Border.all(color: AppColors.onSurfaceVariant),
@@ -44,26 +48,6 @@ class ColorNodeBody extends ConsumerWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _staticProperty(String label, double value) {
-    return Column(
-      mainAxisSize: MainAxisSize.min, // Занимает минимум места
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            fontSize: 10,
-            color: AppColors.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          value.toStringAsFixed(2),
-          style: GoogleFonts.firaCode(fontSize: 10, color: AppColors.primary),
-        ),
-      ],
     );
   }
 }

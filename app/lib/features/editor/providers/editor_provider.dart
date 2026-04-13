@@ -10,6 +10,7 @@ import 'package:lumen_node_app/features/editor/data/editor_state.dart';
 import 'package:lumen_node_app/features/editor/model/node_model.dart';
 import 'package:lumen_node_app/features/editor/model/connection_model.dart';
 import 'package:lumen_node_app/features/editor/presentation/painters/painter_helper.dart';
+import 'package:lumen_node_app/features/editor/providers/utime_provider.dart';
 
 part 'editor_provider.g.dart';
 
@@ -31,7 +32,7 @@ class Editor extends _$Editor {
       rethrow;
     }
 
-    _updateRenderLoop();
+    _updateRenderLoop(newCode);
   }
 
   void _initRenderer() async {
@@ -55,13 +56,14 @@ class Editor extends _$Editor {
   //   super.dispose();
   // }
 
-  void _updateRenderLoop() {
-    final hasTimeNode = state.nodes.any((node) => node.type == NodeType.time);
+  void _updateRenderLoop(String currentShaderCode) {
+    final needsAnimation = currentShaderCode.contains('uTime');
 
-    if (hasTimeNode) {
+    if (needsAnimation) {
       if (_renderLoop == null || !_renderLoop!.isActive) {
-        _renderLoop = Timer.periodic(const Duration(milliseconds: 16), (_) {
-          _rendererChannel.invokeMethod('requestFrame');
+        _renderLoop = Timer.periodic(const Duration(milliseconds: 16), (_) async {
+          final currentTime = await _rendererChannel.invokeMethod<double>('requestFrame');
+          ref.read(uTimeProvider.notifier).state = currentTime ?? 0.0;
         });
       }
     } else {
