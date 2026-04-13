@@ -6,6 +6,9 @@ enum NodeType {
   color(ENodeType.NODE_TYPE_COLOR),
   multiply(ENodeType.NODE_TYPE_MULTIPLY),
   add(ENodeType.NODE_TYPE_ADD),
+  uv(ENodeType.NODE_TYPE_UV),
+  time(ENodeType.NODE_TYPE_TIME),
+
   master(ENodeType.NODE_TYPE_MASTER);
 
   final ENodeType nativeValue;

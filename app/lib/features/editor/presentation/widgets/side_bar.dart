@@ -71,10 +71,35 @@ class SideBar extends ConsumerWidget {
             ],
           ),
         ),
+        PopupMenuItem(
+          value: NodeType.uv,
+          child: Row(
+            children: [
+              Icon(Icons.grid_on, color: AppColors.orange, size: 16),
+              SizedBox(width: 8),
+              Text(
+                "UV Node",
+                style: TextStyle(color: AppColors.onSurface),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: NodeType.time,
+          child: Row(
+            children: [
+              Icon(Icons.access_time, color: AppColors.teal, size: 16),
+              SizedBox(width: 8),
+              Text(
+                "Time Node",
+                style: TextStyle(color: AppColors.onSurface),
+              ),
+            ],
+          ),
+        ),
       ],
     );
 
-    // Спавним выбранную ноду
     if (selectedType != null) {
       ref
           .read(editorProvider.notifier)

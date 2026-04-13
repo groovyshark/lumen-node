@@ -23,6 +23,16 @@ class NodeFactory {
       inputs: ["a", "b"],
       outputs: ["output"],
     ),
+    NodeType.uv: (id, type, position) => NodeModel.base(id, type, position).copyWith(
+      name: "UV Node",
+      inputs: [],
+      outputs: ["output"],
+    ),
+    NodeType.time: (id, type, position) => NodeModel.base(id, type, position).copyWith(
+      name: "Time Node",
+      inputs: [],
+      outputs: ["output"],
+    ),
     NodeType.master: (id, type, position) => NodeModel.base(id, type, position).copyWith(
       name: "FRAGMENT OUTPUT",
       inputs: ["color"],

@@ -14,6 +14,9 @@ class AppColors {
   static const primaryDim = Color(0xFF00C0EA);
   static const secondary = Color(0xFF6BFE9C);
   static const tertiary = Color(0xFFD277FF);
+
+  static const orange = Color(0xFFFFA726);
+  static const teal = Color(0xFF26A69A);
   
   static const onSurface = Color(0xFFFFFFFF);
   static const onSurfaceVariant = Color(0xFFADAAAA);

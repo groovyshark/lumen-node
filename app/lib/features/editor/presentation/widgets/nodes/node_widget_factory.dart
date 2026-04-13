@@ -7,6 +7,8 @@ import 'bodies/color_node_body.dart';
 import 'bodies/multiply_node_body.dart';
 import 'bodies/add_node_body.dart';
 import 'bodies/master_node_body.dart';
+import 'bodies/uv_node_body.dart';
+import 'bodies/time_node_body.dart';
 
 typedef NodeBuilder = Widget Function(BuildContext context, NodeModel node);
 
@@ -15,6 +17,9 @@ class NodeWidgetFactory {
     NodeType.color: (context, node) => ColorNodeBody(node: node),
     NodeType.multiply: (context, node) => MultiplyNodeBody(node: node),
     NodeType.add: (context, node) => AddNodeBody(node: node),
+    NodeType.uv: (context, node) => UVNodeBody(node: node),
+    NodeType.time: (context, node) => TimeNodeBody(node: node),
+
     NodeType.master: (context, node) => MasterNodeBody(node: node),
   };
 

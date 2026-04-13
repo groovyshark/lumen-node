@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:lumen_node_app/features/editor/data/node_factory.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,8 @@ part 'editor_provider.g.dart';
 class Editor extends _$Editor {
   static const _rendererChannel = MethodChannel('lumen/renderer');
 
+  Timer? _renderLoop;
+
   void _syncShaderCode() async {
     final engine = ref.read(lumenEngineProvider);
     final newCode = engine.compile();
@@ -26,6 +30,8 @@ class Editor extends _$Editor {
     } catch (e) {
       rethrow;
     }
+
+    _updateRenderLoop();
   }
 
   void _initRenderer() async {
@@ -42,6 +48,30 @@ class Editor extends _$Editor {
     }
   }
 
+  // @override
+  // void dispose() {
+  //   _renderLoop?.cancel();
+
+  //   super.dispose();
+  // }
+
+  void _updateRenderLoop() {
+    final hasTimeNode = state.nodes.any((node) => node.type == NodeType.time);
+
+    if (hasTimeNode) {
+      if (_renderLoop == null || !_renderLoop!.isActive) {
+        _renderLoop = Timer.periodic(const Duration(milliseconds: 16), (_) {
+          _rendererChannel.invokeMethod('requestFrame');
+        });
+      }
+    } else {
+      if (_renderLoop != null && _renderLoop!.isActive) {
+        _renderLoop?.cancel();
+        _renderLoop = null;
+      }
+    }
+  }
+
   @override
   EditorState build() {
     ref.watch(lumenEngineProvider);
@@ -52,26 +82,6 @@ class Editor extends _$Editor {
       nodes: [
         NodeFactory.create('master', NodeType.master, const Offset(600, 300))
       ]
-    );
-  }
-
-  NodeModel _initNode(
-    String id,
-    String name,
-    NodeType type,
-    Offset position,
-    List<String> inputs,
-    List<String> outputs, {
-    Map<String, double> parameters = const {},
-  }) {
-    return NodeModel(
-      id: id,
-      name: name,
-      position: position,
-      type: type,
-      inputs: inputs,
-      outputs: outputs,
-      parameters: parameters,
     );
   }
 

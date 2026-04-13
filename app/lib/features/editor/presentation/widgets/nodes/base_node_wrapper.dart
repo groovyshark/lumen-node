@@ -225,6 +225,10 @@ class BaseNodeWrapper extends ConsumerWidget {
         return Colors.blue.shade800;
       case NodeType.add:
         return Colors.lime.shade800;
+      case NodeType.uv:
+        return Colors.orange.shade800;
+      case NodeType.time:
+        return Colors.teal.shade800;
       case NodeType.multiply:
         return Colors.deepPurple.shade800;
       // default: return Colors.grey.shade700;
@@ -241,6 +245,10 @@ class BaseNodeWrapper extends ConsumerWidget {
         return Colors.limeAccent.shade100;
       case NodeType.multiply:
         return Colors.deepPurpleAccent.shade100;
+      case NodeType.uv:
+        return Colors.orangeAccent.shade100;
+      case NodeType.time:
+        return Colors.tealAccent.shade100;
       // default: return Colors.grey.shade500;
     }
   }

@@ -172,6 +172,8 @@ enum ENodeType {
   NODE_TYPE_COLOR(0),
   NODE_TYPE_MULTIPLY(1),
   NODE_TYPE_ADD(2),
+  NODE_TYPE_TIME(3),
+  NODE_TYPE_UV(4),
   NODE_TYPE_MASTER(100);
 
   final int value;
@@ -181,6 +183,8 @@ enum ENodeType {
     0 => NODE_TYPE_COLOR,
     1 => NODE_TYPE_MULTIPLY,
     2 => NODE_TYPE_ADD,
+    3 => NODE_TYPE_TIME,
+    4 => NODE_TYPE_UV,
     100 => NODE_TYPE_MASTER,
     _ => throw ArgumentError('Unknown value for ENodeType: $value'),
   };

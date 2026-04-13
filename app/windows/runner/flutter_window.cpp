@@ -84,12 +84,19 @@ bool FlutterWindow::OnCreate() {
     gChannel->SetMethodCallHandler(
         [registrar](const flutter::MethodCall<flutter::EncodableValue> &call,
                     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-            if (call.method_name() == "getTextureId") {
+            
+            const auto& method = call.method_name();
+            
+            if (method == "getTextureId") {
                 result->Success(flutter::EncodableValue(glTextureId));
-                return;
-            }
-
-            if (call.method_name() == "updateShader") {
+            } else if (method == "requestFrame") {
+                if (glRenderer) {
+                    glRenderer->render();
+                    
+                    registrar->MarkTextureFrameAvailable(glTextureId);
+                }
+                result->Success();
+            } else if (method == "updateShader") {
                 const auto *args = std::get_if<flutter::EncodableMap>(call.arguments());
                 if (args) {
                     auto it = args->find(flutter::EncodableValue("code"));

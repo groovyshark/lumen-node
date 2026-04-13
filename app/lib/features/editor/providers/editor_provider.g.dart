@@ -6,7 +6,7 @@ part of 'editor_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$editorHash() => r'4d6de0692a6e894b1bee5e371b4b8c30448a06f6';
+String _$editorHash() => r'a37b122db2b1049ebe2600c914cd13423c5274c8';
 
 /// See also [Editor].
 @ProviderFor(Editor)

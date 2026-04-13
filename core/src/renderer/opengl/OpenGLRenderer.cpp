@@ -101,8 +101,9 @@ void OpenGLRenderer::updateShader(const std::string& fragmentShaderCode) {
         "#version 330 core\n"
         "out vec4 FragColor;\n"
         "in vec2 uv;\n"
+        "uniform float uTime;\n"
         "{}\n"
-        "void main() {{ mainImage(FragColor, uv); }}\n", 
+        "\nvoid main() {{ mainImage(FragColor, uv); }}\n", 
         fragmentShaderCode
     );
 
@@ -137,6 +138,12 @@ void OpenGLRenderer::render() {
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    GLint timeLoc = glGetUniformLocation(_shaderProgram, "uTime");
+    if (timeLoc != -1) {
+        GLfloat timeValue = static_cast<GLfloat>(glfwGetTime());
+        glUniform1f(timeLoc, timeValue);
+    }
 
     glUseProgram(_shaderProgram);
     glBindVertexArray(_vao);
