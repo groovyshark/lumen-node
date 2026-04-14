@@ -1,7 +1,7 @@
 .PHONY: all clean get gen icons splash run build_apk build_ios
 
 # Default target
-all: get gen
+all: clean gen ffi
 
 clean:
 	@echo "🧹 Cleaning project..."
