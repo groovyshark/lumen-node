@@ -18,75 +18,91 @@ class NodeCanvas extends ConsumerWidget {
     final notifier = ref.read(editorProvider.notifier);
     final canvasKey = ref.watch(canvasKeyProvider);
 
-    return MouseRegion(
-      onHover: (e) {
-        if (state.draftingNodeId != null) {
-          notifier.updateDraftingConnection(e.localPosition);
-        }
-      },
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => ref.read(editorProvider.notifier).selectNode(null),
-        onTertiaryTapDown: (d) {
-          final RenderBox? box =
-              canvasKey.currentContext?.findRenderObject() as RenderBox?;
-          if (box == null) return;
+    return InteractiveViewer(
+      boundaryMargin: const EdgeInsets.all(double.infinity),
+      minScale: 0.1,
+      maxScale: 2.0,
+      constrained: false,
 
-          final localPos = box.globalToLocal(d.globalPosition);
+      trackpadScrollCausesScale: true,
 
-          notifier.tryDeleteConnectionAt(localPos);
-        },
-        onPanUpdate: (d) {
-          if (state.draftingNodeId != null) {
-            notifier.updateDraftingConnection(d.localPosition);
-          }
-        },
-        onPanEnd: (_) {
-          if (state.draftingNodeId != null) {
-            notifier.endDraftingConnection();
-          }
-        },
-        child: Stack(
-          key: canvasKey,
-          children: [
-            const RepaintBoundary(
-              child: CustomPaint(
-                painter: CanvasGridPainter(),
-                child: SizedBox.expand(),
-              ),
-            ),
+      panEnabled: state.draftingNodeId == null,
 
-            RepaintBoundary(
-              child: CustomPaint(
-                painter: ConnectionPainter(state.nodes, state.connections),
-                child: SizedBox.expand(),
-              ),
-            ),
+      child: SizedBox(
+        width: 10000,
+        height: 10000,
 
-            if (state.draftingNodeId != null &&
-                state.draftingPos != null &&
-                state.draftingPinName != null)
-              RepaintBoundary(
-                child: CustomPaint(
-                  painter: DraftConnectionPainter(
-                    state.nodes.firstWhere(
-                      (n) => n.id == state.draftingNodeId!,
-                    ),
-                    state.draftingPinName!,
-                    state.draftingPos!,
+        child: MouseRegion(
+          onHover: (e) {
+            if (state.draftingNodeId != null) {
+              notifier.updateDraftingConnection(e.localPosition);
+            }
+          },
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => ref.read(editorProvider.notifier).selectNode(null),
+            onTertiaryTapDown: (d) {
+              final RenderBox? box =
+                  canvasKey.currentContext?.findRenderObject() as RenderBox?;
+              if (box == null) return;
+
+              final localPos = box.globalToLocal(d.globalPosition);
+
+              notifier.tryDeleteConnectionAt(localPos);
+            },
+            onPanUpdate: (d) {
+              if (state.draftingNodeId != null) {
+                notifier.updateDraftingConnection(d.localPosition);
+              }
+            },
+            onPanEnd: (_) {
+              if (state.draftingNodeId != null) {
+                notifier.endDraftingConnection();
+              }
+            },
+            child: Stack(
+              key: canvasKey,
+              children: [
+                const RepaintBoundary(
+                  child: CustomPaint(
+                    painter: CanvasGridPainter(),
+                    child: SizedBox.expand(),
                   ),
-                  child: SizedBox.expand(),
                 ),
-              ),
 
-            ...state.nodes.map(
-              (node) => Positioned(
-                left: node.position.dx,
-                top: node.position.dy,
-                child: NodeWidgetFactory.build(context, node),
-              ),
+                RepaintBoundary(
+                  child: CustomPaint(
+                    painter: ConnectionPainter(state.nodes, state.connections),
+                    child: SizedBox.expand(),
+                  ),
+                ),
+
+                if (state.draftingNodeId != null &&
+                    state.draftingPos != null &&
+                    state.draftingPinName != null)
+                  RepaintBoundary(
+                    child: CustomPaint(
+                      painter: DraftConnectionPainter(
+                        state.nodes.firstWhere(
+                          (n) => n.id == state.draftingNodeId!,
+                        ),
+                        state.draftingPinName!,
+                        state.draftingPos!,
+                      ),
+                      child: SizedBox.expand(),
+                    ),
+                  ),
+
+                ...state.nodes.map(
+                  (node) => Positioned(
+                    left: node.position.dx,
+                    top: node.position.dy,
+                    child: NodeWidgetFactory.build(context, node),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
