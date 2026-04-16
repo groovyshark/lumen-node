@@ -15,7 +15,7 @@ find_package(GLEW CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
 
 file(GLOB_RECURSE SOURCES 
-    "core/*.cpp" "core/*.hpp" "core/*.h"
+    "core/*.cc" "core/*.cpp" "core/*.hpp" "core/*.h"
     "bridge/*.cpp" "bridge/*.hpp" "bridge/*.h"
 )
 
@@ -24,8 +24,9 @@ add_library(${PROJECT_NAME} SHARED
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC 
-    core/include 
+    core/include
     bridge/include
+    third_party/stb_image
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 

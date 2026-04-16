@@ -8,6 +8,7 @@
 #include "nodes/NormalNode.hpp"
 #include "nodes/TimeNode.hpp"
 #include "nodes/UVNode.hpp"
+#include "nodes/TextureNode.hpp"
 
 extern "C" {
 
@@ -41,19 +42,37 @@ EXPORT void addNode(void* graphPtr, const char* nodeId, ENodeType nodeType) {
     case NODE_TYPE_NORMAL:
         graph->addNode(std::make_shared<NormalNode>(nodeId));
         break;
+    case NODE_TYPE_TEXTURE:
+        graph->addNode(std::make_shared<TextureNode>(nodeId));
+        break;
     case NODE_TYPE_MASTER:
         graph->addNode(std::make_shared<MasterNode>(nodeId));
         break;
     }
 }
 
-EXPORT void setNodeParameter(
+EXPORT void setNodeParameterFloat(
     void* graphPtr,
     const char* nodeId,
     const char* paramName,
-    float value) {
+    float value)
+{
+    if (!graphPtr || !nodeId || !paramName) return;
+    
     auto graph = static_cast<ShaderGraph*>(graphPtr);
     graph->setNodeParam(nodeId, paramName, value);
+}
+
+EXPORT void setNodeParameterString(
+    void* graphPtr,
+    const char* nodeId,
+    const char* paramName,
+    const char* value)
+{
+    if (!graphPtr || !nodeId || !paramName) return;
+
+    auto graph = static_cast<ShaderGraph*>(graphPtr);
+    graph->setNodeParam(nodeId, paramName, std::string(value));
 }
 
 EXPORT void connectNodes(void* graphPtr,

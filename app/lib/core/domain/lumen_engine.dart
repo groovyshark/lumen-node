@@ -34,18 +34,31 @@ class LumenEngine {
     malloc.free(nativeId);
   }
 
-  void setNodeParameter(String nodeId, String paramName, double value) {
+  void setNodeParameter(String nodeId, String paramName, dynamic value) {
     if (_graph == null) return;
 
     final nativeId = nodeId.toNativeUtf8();
     final nativeParam = paramName.toNativeUtf8();
 
-    _native.setNodeParameter(
-      _graph!,
-      nativeId.cast<Char>(),
-      nativeParam.cast<Char>(),
-      value,
-    );
+    if (value is double || value is int) {
+      _native.setNodeParameterFloat(
+        _graph!,
+        nativeId.cast<Char>(),
+        nativeParam.cast<Char>(),
+        value.toDouble(),
+      );
+    } else if (value is String) {
+      final nativeValue = value.toNativeUtf8();
+
+      _native.setNodeParameterString(
+        _graph!,
+        nativeId.cast<Char>(),
+        nativeParam.cast<Char>(),
+        nativeValue.cast<Char>(),
+      );
+      
+      malloc.free(nativeValue);
+    }
 
     malloc.free(nativeId);
     malloc.free(nativeParam);

@@ -6,6 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <stb_image.h>
+
 namespace {
     const char* vertexShaderSource = R"(
         #version 330 core
@@ -201,6 +203,7 @@ void OpenGLRenderer::updateShader(const std::string &fragmentShaderCode) {
         "in vec2 uv;\n"
         "in vec3 Normal;\n  "
         "uniform float uTime;\n"
+        "uniform sampler2D uTexture;\n"
         "{}\n"
         "\nvoid main() {{\n"
         "    vec4 baseColor;"
@@ -264,6 +267,10 @@ void OpenGLRenderer::render() {
     glUniformMatrix4fv(glGetUniformLocation(_shaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(_shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _userTexture);
+    glUniform1i(glGetUniformLocation(_shaderProgram, "uTexture"), 0);
+
     glBindVertexArray(sphereVAO);
     glDrawElements(GL_TRIANGLES, sphereIndexCount, GL_UNSIGNED_INT, 0);
 
@@ -294,4 +301,41 @@ GLuint OpenGLRenderer::compileShader(GLenum type, const std::string &source) {
     }
 
     return shader;
+}
+
+bool OpenGLRenderer::loadUserTexture(const std::string& filepath) {
+    glfwMakeContextCurrent(_window);
+
+    if (_userTexture != 0) {
+        glDeleteTextures(1, &_userTexture);
+    }
+
+    glGenTextures(1, &_userTexture);
+    glBindTexture(GL_TEXTURE_2D, _userTexture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width, height, nrChannels;
+    stbi_set_flip_vertically_on_load(true);
+
+    uint8_t* data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 0);
+
+    bool result = false;
+    if (data) {
+        GLenum format = (nrChannels == 4) ? GL_RGBA : GL_RGB;
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        result = true;
+    } else {
+        std::cerr << "OpenGLRenderer::loadUserTexture:  " << filepath << std::endl;
+        result = false;
+    }
+
+    stbi_image_free(data);
+
+    return result;
 }

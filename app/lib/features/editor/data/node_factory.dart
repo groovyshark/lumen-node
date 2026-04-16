@@ -38,6 +38,12 @@ class NodeFactory {
       inputs: [],
       outputs: ["output"],
     ),
+    NodeType.texture: (id, type, position) => NodeModel.base(id, type, position).copyWith(
+      name: "Texture Node",
+      inputs: ["uv"],
+      outputs: ["output"],
+      parameters: {"path": ""},
+    ),
     NodeType.master: (id, type, position) => NodeModel.base(id, type, position).copyWith(
       name: "FRAGMENT OUTPUT",
       inputs: ["color"],

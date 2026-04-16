@@ -13,6 +13,12 @@ void ShaderGraph::addNode(std::shared_ptr<Node> node) {
     _nodes[node->id] = node;
 }
 
+void ShaderGraph::setNodeParam(const std::string &nodeId, const std::string &paramName, const NodeParam &value) {
+    if (_nodes.count(nodeId)) {
+        _nodes[nodeId]->setParam(paramName, value);
+    }
+}
+
 void ShaderGraph::connect(
     const std::string &fromNodeId,
     const std::string &fromPinId,

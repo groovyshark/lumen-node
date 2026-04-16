@@ -49,15 +49,9 @@ class Editor extends _$Editor {
     }
   }
 
-  // @override
-  // void dispose() {
-  //   _renderLoop?.cancel();
-
-  //   super.dispose();
-  // }
-
   void _updateRenderLoop(String currentShaderCode) {
-    final needsAnimation = currentShaderCode.contains('uTime');
+    // final needsAnimation = currentShaderCode.contains('uTime');
+    final needsAnimation = true;
 
     if (needsAnimation) {
       if (_renderLoop == null || !_renderLoop!.isActive) {
@@ -66,11 +60,14 @@ class Editor extends _$Editor {
           ref.read(uTimeProvider.notifier).state = currentTime ?? 0.0;
         });
       }
-    } else {
-      if (_renderLoop != null && _renderLoop!.isActive) {
-        _renderLoop?.cancel();
-        _renderLoop = null;
-      }
+    }
+  }
+
+  Future<void> loadTexture(String path) async {
+    try {
+      await _rendererChannel.invokeMethod<bool>('loadTexture', {'path': path});
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -124,11 +121,11 @@ class Editor extends _$Editor {
     );
   }
 
-  void updateNodeParameter(String nodeId, String paramName, double value) {
+  void updateNodeParameter(String nodeId, String paramName, dynamic value) {
     state = state.copyWith(
       nodes: state.nodes.map((n) {
         if (n.id == nodeId) {
-          final newParams = Map<String, double>.from(n.parameters);
+          final newParams = Map<String, dynamic>.from(n.parameters);
           newParams[paramName] = value;
           return n.copyWith(parameters: newParams);
         }

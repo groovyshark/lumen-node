@@ -6,6 +6,12 @@
 #include <memory>
 #include <vector>
 #include <format>
+#include <variant>
+
+using NodeParam = std::variant<
+    float, 
+    std::string
+>;
 
 class Node {
 public:
@@ -15,11 +21,11 @@ public:
     std::vector<Pin> inputs;
     std::vector<Pin> outputs;
 
-    std::map<std::string, float> params;
+    std::map<std::string, NodeParam> params;
 
     virtual ~Node() = default;
 
-    void setParam(const std::string& name, float value);
+    void setParam(const std::string& name, const NodeParam& value);
 
     std::string getOutputVar(const std::string& pinName = "out") const;
     

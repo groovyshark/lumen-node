@@ -15,6 +15,7 @@ class NodeWidgetFactory {
     NodeType.uv: (context, node) => UVNodeBody(node: node),
     NodeType.time: (context, node) => TimeNodeBody(node: node),
     NodeType.normal: (context, node) => NormalNodeBody(node: node),
+    NodeType.texture: (context, node) => TextureNodeBody(node: node),
 
     NodeType.master: (context, node) => MasterNodeBody(node: node),
   };

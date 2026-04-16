@@ -233,6 +233,8 @@ class BaseNodeWrapper extends ConsumerWidget {
         return Colors.deepPurple.shade800;
       case NodeType.normal:
         return Colors.green.shade800;
+      case NodeType.texture:
+        return Colors.brown.shade800;
       // default: return Colors.grey.shade700;
     }
   }
@@ -253,7 +255,8 @@ class BaseNodeWrapper extends ConsumerWidget {
         return Colors.tealAccent.shade100;
       case NodeType.normal:
         return Colors.greenAccent.shade100;
-
+      case NodeType.texture:
+        return Colors.brown.shade300;
       // default: return Colors.grey.shade500;
     }
   }
@@ -274,6 +277,8 @@ class BaseNodeWrapper extends ConsumerWidget {
         return Icons.access_time;
       case NodeType.normal:
         return Icons.device_unknown;
+      case NodeType.texture:
+        return Icons.image;
     }
   }
 }

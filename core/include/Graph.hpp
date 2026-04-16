@@ -25,11 +25,7 @@ public:
         const std::string& targetPinId
     );
 
-    void setNodeParam(const std::string& nodeId, const std::string& paramName, float value) {
-        if (_nodes.count(nodeId)) {
-            _nodes[nodeId]->setParam(paramName, value);
-        }
-    }
+    void setNodeParam(const std::string& nodeId, const std::string& paramName, const NodeParam& value);
 
     std::string compile();
 

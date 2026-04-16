@@ -9,6 +9,7 @@ enum NodeType {
   uv(ENodeType.NODE_TYPE_UV),
   time(ENodeType.NODE_TYPE_TIME),
   normal(ENodeType.NODE_TYPE_NORMAL),
+  texture(ENodeType.NODE_TYPE_TEXTURE),
 
   master(ENodeType.NODE_TYPE_MASTER);
 
@@ -53,7 +54,7 @@ class NodeModel {
     List<String>? inputs,
     List<String>? outputs,
 
-    Map<String, double>? parameters,
+    Map<String, dynamic>? parameters,
   }) {
     return NodeModel(
       id: id,
@@ -78,5 +79,5 @@ class NodeModel {
 
   final Size size;
 
-  final Map<String, double> parameters;
+  final Map<String, dynamic> parameters;
 }

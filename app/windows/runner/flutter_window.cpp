@@ -119,6 +119,26 @@ bool FlutterWindow::OnCreate() {
                     }
                 }
                 result->Error("BAD_ARGS", "Expected string argument 'code'");
+            } else if (method == "loadTexture") {
+                const auto *args = std::get_if<flutter::EncodableMap>(call.arguments());
+                if (args) {
+                    auto it = args->find(flutter::EncodableValue("path"));
+                    if (it != args->end() && std::holds_alternative<std::string>(it->second)) {
+                        std::string texturePath = std::get<std::string>(it->second);
+
+                        if (glRenderer) {
+                            glRenderer->loadUserTexture(texturePath);
+                            glRenderer->render();
+
+                            registrar->MarkTextureFrameAvailable(glTextureId);
+                        }
+                        
+                        result->Success();
+                        return;
+                    }
+                }
+                result->Error("BAD_ARGS", "Expected string argument 'path'");
+
             } else {
                 result->NotImplemented();
             }

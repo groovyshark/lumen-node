@@ -15,6 +15,7 @@ add_executable(${BINARY_NAME} WIN32
   "Runner.rc"
   "runner.exe.manifest"
   "../../../core/src/renderer/opengl/OpenGLRenderer.cpp"
+  "../../../core/stb_image_impl.cc"
 )
 
 list(APPEND CMAKE_PREFIX_PATH "C:/development/lumen-node/build/vcpkg_installed/x64-windows")
@@ -40,7 +41,11 @@ target_compile_definitions(${BINARY_NAME} PRIVATE "NOMINMAX")
 # dependencies here.
 target_link_libraries(${BINARY_NAME} PRIVATE flutter flutter_wrapper_app flutter_wrapper_plugin opengl32 GLEW::GLEW glfw )
 target_link_libraries(${BINARY_NAME} PRIVATE "dwmapi.lib")
-target_include_directories(${BINARY_NAME} PRIVATE "${CMAKE_SOURCE_DIR}" "../../../core/include")
+target_include_directories(${BINARY_NAME} PRIVATE 
+    "${CMAKE_SOURCE_DIR}" 
+    "../../../core/include"
+    "../../../third_party/stb_image"
+)
 
 # Run the Flutter tool portions of the build. This must not be removed.
 add_dependencies(${BINARY_NAME} flutter_assemble)

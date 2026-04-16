@@ -64,16 +64,16 @@ class LumenBindings {
         void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>, int)
       >();
 
-  void setNodeParameter(
+  void setNodeParameterFloat(
     ffi.Pointer<ffi.Void> graphPtr,
     ffi.Pointer<ffi.Char> nodeId,
     ffi.Pointer<ffi.Char> paramName,
     double value,
   ) {
-    return _setNodeParameter(graphPtr, nodeId, paramName, value);
+    return _setNodeParameterFloat(graphPtr, nodeId, paramName, value);
   }
 
-  late final _setNodeParameterPtr =
+  late final _setNodeParameterFloatPtr =
       _lookup<
         ffi.NativeFunction<
           ffi.Void Function(
@@ -83,14 +83,44 @@ class LumenBindings {
             ffi.Float,
           )
         >
-      >('setNodeParameter');
-  late final _setNodeParameter = _setNodeParameterPtr
+      >('setNodeParameterFloat');
+  late final _setNodeParameterFloat = _setNodeParameterFloatPtr
       .asFunction<
         void Function(
           ffi.Pointer<ffi.Void>,
           ffi.Pointer<ffi.Char>,
           ffi.Pointer<ffi.Char>,
           double,
+        )
+      >();
+
+  void setNodeParameterString(
+    ffi.Pointer<ffi.Void> graphPtr,
+    ffi.Pointer<ffi.Char> nodeId,
+    ffi.Pointer<ffi.Char> paramName,
+    ffi.Pointer<ffi.Char> value,
+  ) {
+    return _setNodeParameterString(graphPtr, nodeId, paramName, value);
+  }
+
+  late final _setNodeParameterStringPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+          )
+        >
+      >('setNodeParameterString');
+  late final _setNodeParameterString = _setNodeParameterStringPtr
+      .asFunction<
+        void Function(
+          ffi.Pointer<ffi.Void>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
         )
       >();
 
@@ -175,6 +205,7 @@ enum ENodeType {
   NODE_TYPE_TIME(3),
   NODE_TYPE_UV(4),
   NODE_TYPE_NORMAL(5),
+  NODE_TYPE_TEXTURE(6),
   NODE_TYPE_MASTER(100);
 
   final int value;
@@ -187,6 +218,7 @@ enum ENodeType {
     3 => NODE_TYPE_TIME,
     4 => NODE_TYPE_UV,
     5 => NODE_TYPE_NORMAL,
+    6 => NODE_TYPE_TEXTURE,
     100 => NODE_TYPE_MASTER,
     _ => throw ArgumentError('Unknown value for ENodeType: $value'),
   };

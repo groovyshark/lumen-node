@@ -1,6 +1,6 @@
 #include "Node.hpp"
 
-void Node::setParam(const std::string& name, float value) {
+void Node::setParam(const std::string& name, const NodeParam& value) {
     params[name] = value;
 }
 

@@ -17,6 +17,8 @@ public:
     bool initialize(int width, int height) override;
 
     void updateShader(const std::string& fragmentShaderCode) override;
+
+    bool loadUserTexture(const std::string& filepath);
     
     void render() override;
     
@@ -50,5 +52,7 @@ private:
     GLuint sphereVBO{0};
     GLuint sphereEBO{0};
     int sphereIndexCount{0};
+
+    GLuint _userTexture{0};
 };
 
